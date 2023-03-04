@@ -7,11 +7,11 @@
 
 
 # Common settings
-BasedOnStyle:  WebKit
+BasedOnStyle:  Google
 TabWidth:        2
 IndentWidth:     2
-UseTab:          Always
-ColumnLimit: 100
+UseTab:          Never
+ColumnLimit: 80
 
 # Other languages JavaScript, Proto
 

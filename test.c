@@ -2,23 +2,25 @@
 
 typedef struct interval
 {
-	size_t seconds;
-	size_t minutes;
-	size_t hours;
+  size_t seconds;
+  size_t minutes;
+  size_t hours;
 } interval;
 
 int main()
 {
-	printf("Hola\n");
+  printf("Hola\n");
 
-	interval* t1 = (interval*)memsafe_boii_api__allocate(sizeof(interval));
-	interval* t2 = (interval*)memsafe_boii_api__allocate(sizeof(interval));
+  interval* t1 = (interval*)memsafe_boii_api__allocate(sizeof(interval));
+  interval* t2 = (interval*)memsafe_boii_api__allocate(sizeof(interval));
 
-	memsafe_boii_api__deallocate(t1);
-	// forgetting to deallocate
-	// memsafe_boii_api__deallocate(t2);
+  t2 = (interval*)memsafe_boii_api__reallocate(t2, 2 * sizeof(interval));
 
-	memsafe_boii_api__clean();
+  memsafe_boii_api__deallocate(t1);
+  // forgetting to deallocate
+  // memsafe_boii_api__deallocate(t2);
 
-	return 0;
+  memsafe_boii_api__clean();
+
+  return 0;
 }

@@ -7,11 +7,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define memsafe_boii_api__allocate(mem_size)                                                       \
-	memsafe__boii__allocate(mem_size, __FILE__, __LINE__, __FUNCTION__)
-#define memsafe_boii_api__deallocate(entity)                                                       \
-	memsafe__boii__deallocate(entity, __FILE__, __LINE__, __FUNCTION__)
-#define memsafe_boii_api__clean() memsafe__boii__clean(__FILE__, __LINE__, __FUNCTION__)
+#define memsafe_boii_api__allocate(mem_size)                                   \
+  memsafe__boii__allocate(mem_size, __FILE__, __LINE__, __FUNCTION__)
+#define memsafe_boii_api__reallocate(entity, new_mem_size)                     \
+  memsafe__boii__reallocate(                                                   \
+    entity, new_mem_size, __FILE__, __LINE__, __FUNCTION__)
+#define memsafe_boii_api__deallocate(entity)                                   \
+  memsafe__boii__deallocate(entity, __FILE__, __LINE__, __FUNCTION__)
+#define memsafe_boii_api__clean()                                              \
+  memsafe__boii__clean(__FILE__, __LINE__, __FUNCTION__)
 
 /**
  * This is the allocation record, which will be stored
@@ -19,13 +23,13 @@
  */
 typedef struct memsafe__boii__allocation
 {
-	void* mem_address;
-	size_t mem_size;
-	char* func_call_file;
-	size_t func_call_line;
-	char* func_name;
+  void* mem_address;
+  size_t mem_size;
+  char* func_call_file;
+  size_t func_call_line;
+  char* func_name;
 
-	struct memsafe__boii__allocation* next;
+  struct memsafe__boii__allocation* next;
 } memsafe__boii__allocation;
 
 /**
@@ -33,8 +37,8 @@ typedef struct memsafe__boii__allocation
  */
 typedef struct memsafe__boii__allocation_list
 {
-	memsafe__boii__allocation* head;
-	memsafe__boii__allocation* tail;
+  memsafe__boii__allocation* head;
+  memsafe__boii__allocation* tail;
 } memsafe__boii__allocation_list;
 
 /**
@@ -42,11 +46,12 @@ typedef struct memsafe__boii__allocation_list
  *
  * Returns `NULL` if unable to create record.
  */
-static memsafe__boii__allocation* memsafe__boii__allocation_new(void* mem_address,
-																																size_t mem_size,
-																																const char* func_call_file,
-																																size_t func_call_line,
-																																const char* func_name);
+static memsafe__boii__allocation*
+memsafe__boii__allocation_new(void* mem_address,
+                              size_t mem_size,
+                              const char* func_call_file,
+                              size_t func_call_line,
+                              const char* func_name);
 
 /**
  * Frees/deallocates memory for the allocation record.
@@ -63,25 +68,27 @@ static memsafe__boii__allocation_list* memsafe__boii__allocation_list_new();
 /**
  * Adds the new allocation record to the record list.
  */
-static void memsafe__boii__allocation_list_add_record(memsafe__boii__allocation_list* list,
-																											memsafe__boii__allocation* record);
+static void
+memsafe__boii__allocation_list_add_record(memsafe__boii__allocation_list* list,
+                                          memsafe__boii__allocation* record);
 
 /**
  * Removes the allocation record for the address pointed by the entity.
  */
-static void memsafe__boii__allocation_list_remove_record(memsafe__boii__allocation_list* list,
-																												 void* entity);
+static void memsafe__boii__allocation_list_remove_record(
+  memsafe__boii__allocation_list* list, void* entity);
 
 /**
  * Frees/deallocates memory for allocation record list.
  */
-static void memsafe__boii__allocation_list_free(memsafe__boii__allocation_list* list);
+static void
+memsafe__boii__allocation_list_free(memsafe__boii__allocation_list* list);
 
 /**
  * Actual variable which holds the records.
  */
 static memsafe__boii__allocation_list memory_allocations_record_list =
-	(memsafe__boii__allocation_list){.head = NULL, .tail = NULL};
+  (memsafe__boii__allocation_list){.head = NULL, .tail = NULL};
 
 /**
  * Allocates memory of given size and
@@ -97,9 +104,22 @@ static memsafe__boii__allocation_list memory_allocations_record_list =
  * of the un-freed memory, preventing memory leaks.
  */
 void* memsafe__boii__allocate(size_t mem_size,
-															const char* func_call_file,
-															size_t func_call_line,
-															const char* func_name);
+                              const char* func_call_file,
+                              size_t func_call_line,
+                              const char* func_name);
+
+/**
+  * Reallocates memory with new size for the given memory pointer.
+  *
+  * Returns `NULL` if unable to reallocate memory with new size.
+  *
+  * Updates record for this reallocation.
+  */
+void* memsafe__boii__reallocate(void* entity,
+                                size_t new_mem_size,
+                                const char* func_call_file,
+                                size_t func_call_line,
+                                const char* func_name);
 
 /**
  * Deallocates memory of the given pointer
@@ -108,9 +128,9 @@ void* memsafe__boii__allocate(size_t mem_size,
  * Removes the record for allocation.
  */
 void memsafe__boii__deallocate(void* entity,
-															 const char* func_call_file,
-															 size_t func_call_line,
-															 const char* func_name);
+                               const char* func_call_file,
+                               size_t func_call_line,
+                               const char* func_name);
 
 /**
  * Cleans up all of the un-freed memory.
@@ -118,6 +138,8 @@ void memsafe__boii__deallocate(void* entity,
  * It is advised to call `memsafe__boii__clean()`
  * at the end of your program, preventing memory leaks.
  */
-void memsafe__boii__clean(const char* func_call_file, size_t func_call_line, const char* func_name);
+void memsafe__boii__clean(const char* func_call_file,
+                          size_t func_call_line,
+                          const char* func_name);
 
 #endif

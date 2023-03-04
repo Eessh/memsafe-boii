@@ -4,9 +4,12 @@ A simple header only library for handling memory in C/C++, without any possibili
 
 ## Usage
 
-Just 3 simple functions:
+Just 4 simple functions:
 - ```c
   void* memsafe_boii_api__allocate(size_t mem_size) // Allocates memory
+  ```
+- ```c
+  void* memsafe_boii_api__reallocate(void* mem_ptr, size_t new_mem_size) // Re-Allocates memory
   ```
 - ```c
   void memsafe_boii_api__deallocate(void* mem_ptr) // Deallocates memory

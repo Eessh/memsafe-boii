@@ -9,17 +9,32 @@ typedef struct interval
 
 int main()
 {
-  printf("Hola\n");
+  // static allocation of array
+  // memory will be automatically freed
+  interval sample_interval = (interval){.seconds = 1, .minutes = 2, .hours = 3};
+  interval sample_intervals[2] = {(interval){.seconds = 1, .minutes = 2, .hours = 3},
+                           (interval){.seconds = 2, .minutes = 4, .hours = 6}};
 
-  interval* t1 = (interval*)memsafe_boii_api__allocate(sizeof(interval));
-  interval* t2 = (interval*)memsafe_boii_api__allocate(sizeof(interval));
+  // dynamic allocation of memory
+  // we should free memory manually
+  interval* t = (interval*)memsafe_boii_api__allocate(sizeof(interval));
 
-  t2 = (interval*)memsafe_boii_api__reallocate(t2, 2 * sizeof(interval));
+  // manually freeing memory
+  memsafe_boii_api__deallocate(t);
 
-  memsafe_boii_api__deallocate(t1);
+  // dynamic allocation of array
+  // we should free memory manually
+  interval* dynamically_allocated_time_intervals =
+    (interval*)memsafe_boii_api__allocate(5 * sizeof(interval));
+  dynamically_allocated_time_intervals[0].hours = 1;
+  dynamically_allocated_time_intervals[0].minutes = 2;
+  dynamically_allocated_time_intervals[0].seconds = 3;
+  
   // forgetting to deallocate
-  // memsafe_boii_api__deallocate(t2);
+  // memsafe_boii_api__deallocate(dynamically_allocated_time_intervals);
 
+  // cleanup function
+  // frees/deallocates all of the memory which is not cleared manually 
   memsafe_boii_api__clean();
 
   return 0;

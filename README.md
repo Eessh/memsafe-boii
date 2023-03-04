@@ -15,7 +15,9 @@ Just 4 simple functions:
   void memsafe_boii_api__deallocate(void* mem_ptr) // Deallocates memory
   ```
 - ```c
-  void memsafe_boii__clean() // Cleans up any un-freed memory at the end of the program
+  // Should be called at the end of program
+  // Cleans up any un-freed memory
+  void memsafe_boii__clean()
   ```
 
 See `test.c` for example usage.

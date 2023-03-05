@@ -19,6 +19,12 @@ memsafe__boii__allocation_new(void* mem_address,
     return NULL;
   }
 
+  if(mem_size < 0)
+  {
+    // some idiot is allocating negative memory
+    return NULL;
+  }
+
   memsafe__boii__allocation* record =
     (memsafe__boii__allocation*)calloc(1, sizeof(memsafe__boii__allocation));
   if(!record)
@@ -189,6 +195,7 @@ static void memsafe__boii__allocation_list_remove_record(
     entity_record_allocation_node->mem_size = next_record->mem_size;
     entity_record_allocation_node->func_call_line = next_record->func_call_line;
     entity_record_allocation_node->next = next_record->next;
+
     // we need to free function name, filename strings in entity's record
     // as they are dynamically allocated, if we just replace the pointer with
     // next record's pointer, we would leave the memory un-freed
@@ -196,6 +203,7 @@ static void memsafe__boii__allocation_list_remove_record(
     free(entity_record_allocation_node->func_call_file);
     entity_record_allocation_node->func_name = next_record->func_name;
     entity_record_allocation_node->func_call_file = next_record->func_call_file;
+
     // freeing memory of next record
     free(next_record);
   }
@@ -259,6 +267,12 @@ void* memsafe__boii__allocate(size_t mem_size,
     printf("MemsafeBoii__Log: Unable to allocate memory of size: %zu\n",
            mem_size);
 #endif
+    return NULL;
+  }
+
+  if(mem_size < 0)
+  {
+    // some idiot is allocating negative memory
     return NULL;
   }
 

@@ -308,6 +308,19 @@ void* memsafe__boii__reallocate(void* entity,
     return NULL;
   }
 
+  if(new_mem_size < 0)
+  {
+    // some idiot is allocating negative memory
+    //
+    // Cleanup of the old memory is left
+    // to be done by cleanup function
+    // as it would be costly to iterate the
+    // record list every time some idiot does this
+    //
+    // Cleanup function iterate record list only once
+    return NULL;
+  }
+
   // searching for the allocation record
   memsafe__boii__allocation* record = memory_allocations_record_list.head;
   while(record)
@@ -329,7 +342,8 @@ void* memsafe__boii__reallocate(void* entity,
   if(!entity)
   {
 #ifdef DEBUG
-    printf("MemsafeBoii__Log: Unable to reallocate memory with size: %zu\n");
+    printf("MemsafeBoii__Log: Unable to reallocate memory with size: %zu\n",
+           new_mem_size);
 #endif
     return NULL;
   }
